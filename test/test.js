@@ -8,22 +8,22 @@ describe("URL Controller", function () {
     request(app)
       .post("/api/shorturl")
       .type("form")
-      .send({ url: "http://www.thomasloy.de" })
+      .send({ url: "https://www.thomasloy.de" })
       .expect(200)
       .expect("Content-Type", /json/)
-      .end(function (err, res) {
+      .end(function (err, resPostValidUrl) {
         if (err) {
           return done("Error:", err);
         }
-        expect(res.body).to.have.property("original_url");
-        expect(res.body).to.have.property("short_url");
+        expect(resPostValidUrl.body).to.have.property("original_url");
+        expect(resPostValidUrl.body).to.have.property("short_url");
 
-        const shortUrl = res.body.short_url;
+        const shortUrl = resPostValidUrl.body.short_url;
         request(app)
           .get(`/api/shorturl/${shortUrl}`)
           .expect(302)
-          .expect("Location", "http://www.thomasloy.de")
-          .end(function (err, res) {
+          .expect("Location", "https://www.thomasloy.de")
+          .end(function (err, resRedirect) {
             if (err) {
               return done(err);
             }
@@ -39,11 +39,11 @@ describe("URL Controller", function () {
       .send({ url: "https://www.invalid.thomasloy.de" })
       .expect(400)
       .expect("Content-Type", /json/)
-      .end(function (err, res) {
+      .end(function (err, resPostInvalidUrl) {
         if (err) {
           return done("Error:", err);
         }
-        expect(res.body).to.have.property("error", "invalid url");
+        expect(resPostInvalidUrl.body).to.have.property("error", "invalid url");
         done();
       });
   });
@@ -55,11 +55,11 @@ describe("URL Controller", function () {
       .send({ url: "https://www.invalid.thomasloy.de" })
       .expect(400)
       .expect("Content-Type", /json/)
-      .end(function (err, res) {
+      .end(function (err, resDNSLookupError) {
         if (err) {
           return done("Error:", err);
         }
-        expect(res.body).to.have.property("error", "invalid url");
+        expect(resDNSLookupError.body).to.have.property("error", "invalid url");
         done();
       });
   });
