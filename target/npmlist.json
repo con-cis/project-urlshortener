@@ -1,0 +1,1 @@
+{"version":"0.0.3","name":"shorturl","dependencies":{"body-parser":{"version":"1.20.2"},"cors":{"version":"2.8.5"},"dotenv":{"version":"16.3.1"},"express-validator":{"version":"7.0.1"},"express":{"version":"4.18.2"},"mongoose":{"version":"7.4.4"}}}

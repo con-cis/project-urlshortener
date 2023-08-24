@@ -1,13 +1,14 @@
-const dns = require('dns');
+const dns = require("dns");
 const mongoose = require("mongoose");
 const Url = require("../models/Url");
 const Counter = require("../models/Counter");
-const { validationResult } = require('express-validator');
-const { urlValidationChain } = require('./validationController');
+const { validationResult } = require("express-validator");
+const { urlValidationChain } = require("./validationController");
 
 const createShortUrl = async (req, res) => {
-  res.locals.disableButton = true;
-
+  if (res.locals !== undefined) {
+    res.locals.disableButton = true;
+  }
   try {
     await validateUrl(req, res);
 
@@ -27,17 +28,24 @@ const createShortUrl = async (req, res) => {
       await url.save({ session });
       await session.commitTransaction();
       console.info("Entry generated: ", { [seqValue]: url });
-      res.locals.disableButton = false;
-      res.json({ original_url: decodeURIComponent(url.original_url), short_url: seqValue });
+      if (res.locals !== undefined) {
+        res.locals.disableButton = false;
+      }
+      res.json({
+        original_url: decodeURIComponent(url.original_url),
+        short_url: seqValue,
+      });
     } else {
       console.log("Counter entry not found");
     }
 
     session.endSession();
   } catch (error) {
-    console.error('An error occurred:', error);
-    res.locals.disableButton = false;
-    res.status(400).send({ error: 'invalid url' });
+    console.error("An error occurred:", error);
+    if (res.locals !== undefined) {
+      res.locals.disableButton = false;
+    }
+    res.status(400).send({ error: "invalid url" });
   }
 };
 
@@ -46,8 +54,9 @@ const validateUrl = async (req, res) => {
   await validationChain.run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.json({ error: 'invalid url' });
-    throw new Error('invalid url');
+    res.json({ error: "invalid url" });
+    console.error("An error occurred:", errors.array());
+    throw new Error("invalid url");
   }
 };
 
@@ -55,8 +64,8 @@ const dnsLookup = (hostname) => {
   return new Promise((resolve, reject) => {
     dns.lookup(hostname, (err) => {
       if (err) {
-        console.error('DNS lookup error:', err);
-        reject(new Error('invalid url'));
+        console.error("DNS lookup error:", err);
+        reject(new Error("invalid url"));
       } else {
         resolve();
       }
@@ -66,14 +75,16 @@ const dnsLookup = (hostname) => {
 
 const getCounterValue = async (session) => {
   try {
-    const counterEntry = await Counter.findOne({ _id: { db: "test", coll: "urls" } }).session(session);
+    const counterEntry = await Counter.findOne({
+      _id: { db: "test", coll: "urls" },
+    }).session(session);
     return counterEntry ? counterEntry.seq_value : null;
   } catch (error) {
     console.error("Error retrieving counter entry:", error);
-    throw new Error('Error retrieving counter entry');
+    throw new Error("Error retrieving counter entry");
   }
 };
 
 module.exports = {
-  createShortUrl
+  createShortUrl,
 };

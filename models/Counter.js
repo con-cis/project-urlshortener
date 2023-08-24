@@ -8,12 +8,12 @@ const mongoose = require("mongoose");
 const counterSchema = new mongoose.Schema({
   _id: {
     db: String,
-    coll: String
+    coll: String,
   },
   seq_value: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 const Counter = mongoose.model("Counter", counterSchema);
