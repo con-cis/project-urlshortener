@@ -18,6 +18,7 @@ Welcome to the URL Shortener Project! This project aims to provide a simple and 
   - [Setting Up MongoDB](#setting-up-mongodb)
   - [Contributing](#contributing)
   - [License](#license)
+  - [Disclaimer](#disclaimer)
 
 ## Introduction
 
@@ -87,3 +88,16 @@ Contributions are welcome! If you'd like to contribute to the project, follow th
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Disclaimer
+
+This project/app/tool is based on the freeCodeCamp community and platform, which is open source and available under the BSD-3 license. While this project utilizes freeCodeCamp's resources, it's important to note the following:
+
+- This project is not officially endorsed by freeCodeCamp.
+- The creators of this project do not represent freeCodeCamp itself.
+- While most non-sensitive freeCodeCamp data is publicly available and can be used in accordance with the terms of the BSD-3 license, it's crucial to respect the privacy and terms of use of the freeCodeCamp community and platform.
+- Any modifications, use of data, or interactions with the freeCodeCamp platform should be in compliance with the freeCodeCamp's terms of use and any relevant policies.
+
+By using this project/app/tool, you acknowledge that it is not an official product of freeCodeCamp, and any support or issues related to this project should be directed to the project's maintainers, rather than the freeCodeCamp organization.
+
+For more information about freeCodeCamp's terms of use and licensing, please refer to the [freeCodeCamp License](https://github.com/freeCodeCamp/freeCodeCamp/blob/main/LICENSE.md).
