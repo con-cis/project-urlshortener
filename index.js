@@ -4,10 +4,6 @@ const app = express();
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-// Models
-const Url = require("./models/Url");
-const Counter = require("./models/Counter");
-
 // Middleware
 app.use(cors());
 app.use('/public', express.static(`${process.cwd()}/public`));

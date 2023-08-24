@@ -1,5 +1,3 @@
-// urlController.js
-
 const dns = require('dns');
 const mongoose = require("mongoose");
 const Url = require("../models/Url");
