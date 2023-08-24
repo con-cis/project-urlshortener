@@ -1,5 +1,4 @@
 const dns = require("dns");
-const mongoose = require("mongoose");
 const Url = require("../models/Url");
 const Counter = require("../models/Counter");
 const { validationResult } = require("express-validator");
@@ -12,9 +11,6 @@ const createShortUrl = async (req, res) => {
   try {
     await validateUrl(req, res);
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
     const originalUrl = req.body.url;
     const parsedUrl = new URL(originalUrl);
     await dnsLookup(parsedUrl.hostname);
@@ -22,11 +18,10 @@ const createShortUrl = async (req, res) => {
     const decodedUrl = encodeURIComponent(originalUrl);
     const url = new Url({ original_url: decodedUrl });
 
-    const seqValue = await getCounterValue(session);
+    const seqValue = await getCounterValue();
 
     if (seqValue !== null) {
-      await url.save({ session });
-      await session.commitTransaction();
+      await url.save();
       console.info("Entry generated: ", { [seqValue]: url });
       if (res.locals !== undefined) {
         res.locals.disableButton = false;
@@ -39,7 +34,6 @@ const createShortUrl = async (req, res) => {
       console.log("Counter entry not found");
     }
 
-    session.endSession();
   } catch (error) {
     console.error("An error occurred:", error);
     if (res.locals !== undefined) {
@@ -73,11 +67,11 @@ const dnsLookup = (hostname) => {
   });
 };
 
-const getCounterValue = async (session) => {
+const getCounterValue = async () => {
   try {
     const counterEntry = await Counter.findOne({
       _id: { db: "test", coll: "urls" },
-    }).session(session);
+    });
     return counterEntry ? counterEntry.seq_value : null;
   } catch (error) {
     console.error("Error retrieving counter entry:", error);
