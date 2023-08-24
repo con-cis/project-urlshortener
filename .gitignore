@@ -9,6 +9,9 @@ node_modules/
 logs/
 *.log
 
+# Ignore mochawsome-report
+mochawesome-report/
+
 # Ignore generated files
 dist/
 build/

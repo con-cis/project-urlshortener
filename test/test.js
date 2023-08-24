@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../index.js");
+const { app } = require("../index.js");
 const chai = require("chai");
 const expect = chai.expect;
 
@@ -11,19 +11,21 @@ describe("URL Controller", function () {
       .send({ url: "https://www.thomasloy.de" })
       .expect(200)
       .expect("Content-Type", /json/)
-      .end(function (err, resPostValidUrl) {
+      .end(function (err, res) {
         if (err) {
-          return done("Error:", err);
+          return done(err);
         }
-        expect(resPostValidUrl.body).to.have.property("original_url");
-        expect(resPostValidUrl.body).to.have.property("short_url");
+        expect(res.body).to.have.property("original_url");
+        expect(res.body).to.have.property("short_url");
 
-        const shortUrl = resPostValidUrl.body.short_url;
+        const shortUrl = res.body["short_url"];
+        console.log(shortUrl);
+
         request(app)
           .get(`/api/shorturl/${shortUrl}`)
           .expect(302)
-          .expect("Location", "https://www.thomasloy.de")
-          .end(function (err, resRedirect) {
+          .expect("location", "https://www.thomasloy.de")
+          .end(function (err, res) {
             if (err) {
               return done(err);
             }
@@ -36,14 +38,14 @@ describe("URL Controller", function () {
     request(app)
       .post("/api/shorturl")
       .type("form")
-      .send({ url: "https://www.invalid.thomasloy.de" })
+      .send({ url: "https://www.invalid.thomaslXXXy.de" })
       .expect(400)
       .expect("Content-Type", /json/)
-      .end(function (err, resPostInvalidUrl) {
+      .end(function (err, res) {
         if (err) {
           return done("Error:", err);
         }
-        expect(resPostInvalidUrl.body).to.have.property("error", "invalid url");
+        expect(res.body).to.have.property("error", "invalid url");
         done();
       });
   });
@@ -52,14 +54,14 @@ describe("URL Controller", function () {
     request(app)
       .post("/api/shorturl")
       .type("form")
-      .send({ url: "https://www.invalid.thomasloy.de" })
+      .send({ url: "https://www.invalid.thomaslXXXy.de" })
       .expect(400)
       .expect("Content-Type", /json/)
-      .end(function (err, resDNSLookupError) {
+      .end(function (err, res) {
         if (err) {
           return done("Error:", err);
         }
-        expect(resDNSLookupError.body).to.have.property("error", "invalid url");
+        expect(res.body).to.have.property("error", "invalid url");
         done();
       });
   });
