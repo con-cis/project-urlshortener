@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 // Define the URL schema
 const urlSchema = new mongoose.Schema({
   original_url: { type: String, required: true },
-  short_url: { type: Number, unique: true },
+  short_url: { type: Number,},
   created_at: { type: Date, default: Date.now },
 });
 
