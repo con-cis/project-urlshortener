@@ -2,10 +2,19 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const mongoose = require("mongoose");
+const rateLimit = require("express-rate-limit");
 require("dotenv").config();
+
+const apiLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000, 
+	max: 50,
+	standardHeaders: true,
+	legacyHeaders: false,
+})
 
 // Middleware
 app.use(cors());
+app.use('/api', apiLimiter)
 app.use("/public", express.static(`${process.cwd()}/public`));
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
