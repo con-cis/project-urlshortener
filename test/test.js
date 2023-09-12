@@ -19,7 +19,6 @@ describe("URL Controller", function () {
         expect(res.body).to.have.property("short_url");
 
         const shortUrl = res.body["short_url"];
-        console.log(shortUrl);
 
         request(app)
           .get(`/api/shorturl/${shortUrl}`)

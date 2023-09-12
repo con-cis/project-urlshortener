@@ -73,6 +73,13 @@ DNS probing is used to verify the existence of the domain in a given URL. This h
 
 For the trigger functionality, you'll need to use a MongoDB Cloud cluster, as triggers are not supported with local or self-hosted MongoDB instances. If you prefer using local or self-hosted MongoDB, refer to the [MongoDB Change Streams documentation](https://www.mongodb.com/docs/manual/changeStreams/) for more information.
 
+---
+**NOTE**
+
+Set "Event Ordering" in the trigger details to true to prevent race conditions from the code challenge automated requests testing
+
+---
+
 The trigger event code for auto-incrementing counters can be found in the [blog entry](https://www.mongodb.com/basics/mongodb-auto-increment).
 
 ## Contributing

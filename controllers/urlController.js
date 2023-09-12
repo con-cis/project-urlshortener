@@ -50,7 +50,9 @@ const createShortUrl = async (req, res) => {
         res.status(500).send("url not found");
         break;
       case -3003:
-        res.status(500).send("no valid url");
+        // res.status(500).send("no valid url");
+        // status 200 because a code challenge test condition
+        res.status(200).json({ error: 'invalid url' });
         break;
       case 11000:
         res.status(500).send("Counter not synchronized");

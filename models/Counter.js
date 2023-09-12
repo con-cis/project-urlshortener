@@ -6,8 +6,12 @@
 const mongoose = require("mongoose");
 
 const counterSchema = new mongoose.Schema({
+  _id: {
+    db: { type: String, default: "test" },
+    coll: { type: String, default: "urls" },
+  },
   seq_value: {
-    type: Number
+    type: Number,
   },
 });
 
