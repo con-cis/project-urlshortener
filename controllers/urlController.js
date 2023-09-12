@@ -1,8 +1,8 @@
-const dns = require("dns");
+const dns = require("node:dns");
 const Url = require("../models/Url");
 const Counter = require("../models/Counter");
 const { validationResult } = require("express-validator");
-const { urlValidationChain } = require("./validationController");
+const { urlValidationChain } = require("../utilities/validationChains");
 
 const createShortUrl = async (req, res) => {
   if (res.locals !== undefined) {
@@ -13,16 +13,20 @@ const createShortUrl = async (req, res) => {
 
     const originalUrl = req.body.url;
     const parsedUrl = new URL(originalUrl);
-    await dnsLookup(parsedUrl.hostname);
+
+    await dnsLookup(parsedUrl.hostname, res);
 
     const decodedUrl = encodeURIComponent(originalUrl);
-    const url = new Url({ original_url: decodedUrl });
 
-    const seqValue = await getCounterValue();
+    const counterEntry = await Counter.findOne();
+
+    const seqValue = counterEntry?.$inc("seq_value", 1).seq_value ?? 1;
+
+    const url = new Url({ original_url: decodedUrl, short_url: seqValue });
 
     if (seqValue !== null) {
       await url.save();
-      console.info("Entry generated: ", { [seqValue]: url });
+      console.info("Entry generated: ", url);
       if (res.locals !== undefined) {
         res.locals.disableButton = false;
       }
@@ -30,16 +34,24 @@ const createShortUrl = async (req, res) => {
         original_url: decodeURIComponent(url.original_url),
         short_url: seqValue,
       });
-    } else {
-      console.log("Counter entry not found");
     }
-
   } catch (error) {
-    console.error("An error occurred:", error);
     if (res.locals !== undefined) {
       res.locals.disableButton = false;
     }
-    res.status(400).send({ error: "invalid url" });
+    console.error("An error occurred:", error);
+    
+    switch (error.errno || error.code) {
+      case -3008:
+        res.status(500).send("url not found");
+        break;
+      case 11000:
+        res.status(500).send("Counter not synchronized");
+        break;
+      default:
+        res.status(500).send("internal error: unknown error");
+        break;
+    }
   }
 };
 
@@ -48,35 +60,21 @@ const validateUrl = async (req, res) => {
   await validationChain.run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    res.json({ error: "invalid url" });
     console.error("An error occurred:", errors.array());
-    throw new Error("invalid url");
+    res.status(500).send({ error: errors.array() });
   }
 };
 
-const dnsLookup = (hostname) => {
+const dnsLookup = (hostname, res) => {
   return new Promise((resolve, reject) => {
     dns.lookup(hostname, (err) => {
       if (err) {
-        console.error("DNS lookup error:", err);
-        reject(new Error("invalid url"));
+        reject(err);
       } else {
         resolve();
       }
     });
   });
-};
-
-const getCounterValue = async () => {
-  try {
-    const counterEntry = await Counter.findOne({
-      _id: { db: "test", coll: "urls" },
-    });
-    return counterEntry ? counterEntry.seq_value : null;
-  } catch (error) {
-    console.error("Error retrieving counter entry:", error);
-    throw new Error("Error retrieving counter entry");
-  }
 };
 
 module.exports = {

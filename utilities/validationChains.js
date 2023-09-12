@@ -1,10 +1,10 @@
-const { body, param, validationResult } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const urlValidationChain = () =>
   body("url")
     .trim()
     .notEmpty()
-    .withMessage("Field cannot be empty!")
+    .withMessage("URL cannot be empty!")
     .isURL({ allow_query_component: false })
     .withMessage("Invalid URL");
 const idValidationChain = () =>
@@ -12,12 +12,11 @@ const idValidationChain = () =>
     .trim()
     .escape()
     .notEmpty()
-    .withMessage("Field cannot be empty!")
+    .withMessage("ID cannot be empty!")
     .isInt()
     .withMessage("Invalid ID");
 
 module.exports = {
   urlValidationChain,
   idValidationChain,
-  validationResult,
 };

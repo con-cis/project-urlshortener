@@ -8,8 +8,8 @@ const mongoose = require("mongoose");
 // Define the URL schema
 const urlSchema = new mongoose.Schema({
   original_url: { type: String, required: true },
-  short_url: { type: Number, default: null },
-  created_at: { type: Date, default: Date.now },
+  short_url: { type: Number, required: true, unique: true },
+  created_at: { type: Date, default: new Date() },
 });
 
 // Create a model named "Url" based on the schema
