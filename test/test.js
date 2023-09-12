@@ -38,10 +38,11 @@ describe("URL Controller", function () {
       .post("/api/shorturl")
       .type("form")
       .send({ url: "hxxps://www.invalid.thomaslXXXy.de" })
-      .expect(500)
+      .expect(200)
+      .expect("Content-Type", /json/)
       .end(function (err, res) {
         if (err) {
-          expect(res.text).to.be.equal("no valid url");
+          expect(res.body).to.be.equal({"error":"invalid url"});
           return done();
         }
         return done();
