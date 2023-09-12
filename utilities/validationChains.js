@@ -6,7 +6,7 @@ const urlValidationChain = () =>
     .notEmpty()
     .withMessage("URL cannot be empty!")
     .isURL({ allow_query_component: false })
-    .withMessage("Invalid URL");
+    .withMessage(-3003);
 const idValidationChain = () =>
   param("id")
     .trim()

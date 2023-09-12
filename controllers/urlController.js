@@ -40,10 +40,17 @@ const createShortUrl = async (req, res) => {
       res.locals.disableButton = false;
     }
     console.error("An error occurred:", error);
-    
-    switch (error.errno || error.code) {
+
+    if (Array.isArray(error.errors)) {
+      error.valErr = error.errors[0].msg;
+    }
+
+    switch (error.errno || error.code || error.valErr) {
       case -3008:
         res.status(500).send("url not found");
+        break;
+      case -3003:
+        res.status(500).send("no valid url");
         break;
       case 11000:
         res.status(500).send("Counter not synchronized");
@@ -60,8 +67,7 @@ const validateUrl = async (req, res) => {
   await validationChain.run(req);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.error("An error occurred:", errors.array());
-    res.status(500).send({ error: errors.array() });
+    throw errors;
   }
 };
 

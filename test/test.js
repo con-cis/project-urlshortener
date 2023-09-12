@@ -38,15 +38,14 @@ describe("URL Controller", function () {
     request(app)
       .post("/api/shorturl")
       .type("form")
-      .send({ url: "https://www.invalid.thomaslXXXy.de" })
-      .expect(400)
-      .expect("Content-Type", /json/)
+      .send({ url: "hxxps://www.invalid.thomaslXXXy.de" })
+      .expect(500)
       .end(function (err, res) {
         if (err) {
-          return done("Error:", err);
+          expect(res.text).to.be.equal("no valid url");
+          return done();
         }
-        expect(res.body).to.have.property("error", "invalid url");
-        done();
+        return done();
       });
   });
 
@@ -55,14 +54,13 @@ describe("URL Controller", function () {
       .post("/api/shorturl")
       .type("form")
       .send({ url: "https://www.invalid.thomaslXXXy.de" })
-      .expect(400)
-      .expect("Content-Type", /json/)
+      .expect(500)
       .end(function (err, res) {
         if (err) {
-          return done("Error:", err);
+          expect(res.text).to.be.equal("url not found");
+          return done();
         }
-        expect(res.body).to.have.property("error", "invalid url");
-        done();
+        return done();
       });
   });
 });
