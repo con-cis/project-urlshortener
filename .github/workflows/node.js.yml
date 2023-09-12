@@ -14,11 +14,14 @@ jobs:
 
     runs-on: ubuntu-latest
     timeout-minutes: 1
-    
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
+      max-parallel: 2
       matrix:
         node-version: [14.x, 16.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        experimental: [false]
 
     steps:
     - uses: actions/checkout@v3
