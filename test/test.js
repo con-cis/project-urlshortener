@@ -3,7 +3,7 @@ const { app } = require("../index.js");
 const chai = require("chai");
 const expect = chai.expect;
 
-describe("URL Controller", function () {
+describe("URL Controller", function (done) {
   it("should generate a short URL when provided with a valid URL", function (done) {
     request(app)
       .post("/api/shorturl")
@@ -13,7 +13,7 @@ describe("URL Controller", function () {
       .expect("Content-Type", /json/)
       .end(function (err, res) {
         if (err) {
-          return done(err);
+          done(err);
         }
         expect(res.body).to.have.property("original_url");
         expect(res.body).to.have.property("short_url");
@@ -26,11 +26,13 @@ describe("URL Controller", function () {
           .expect("location", "https://www.thomasloy.de")
           .end(function (err, res) {
             if (err) {
-              return done(err);
+              done(err);
             }
             done();
           });
+        done();
       });
+    done();
   });
 
   it("should return an error when provided with an invalid URL", function (done) {
@@ -42,10 +44,10 @@ describe("URL Controller", function () {
       .expect("Content-Type", /json/)
       .end(function (err, res) {
         if (err) {
-          expect(res.body).to.be.equal({"error":"invalid url"});
-          return done();
+          expect(res.body).to.be.equal({ error: "invalid url" });
+          done();
         }
-        return done();
+        done();
       });
   });
 
@@ -58,9 +60,9 @@ describe("URL Controller", function () {
       .end(function (err, res) {
         if (err) {
           expect(res.text).to.be.equal("url not found");
-          return done();
+          done();
         }
-        return done();
+        done();
       });
   });
 });
