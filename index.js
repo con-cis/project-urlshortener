@@ -7,7 +7,7 @@ require("dotenv").config();
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, 
-	max: 50,
+	limit: 50,
 	standardHeaders: true,
 	legacyHeaders: false,
 })
